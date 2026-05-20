@@ -1,3 +1,5 @@
+create databse xyz
+create schema abc..
 
 CREATE TABLE CUST_CNTCT
 (
