@@ -2037,7 +2037,7 @@ CREATE TABLE [PAYMENT]
 	[epay_vendor_number] integer  NULL ,
 	[epay_account_number] integer  NULL ,
 	[credit_card_number] char(18)  NULL ,
-	[credit_card_exp]    datetime  NULL 
+	[credit_card_exp]    datetime  NOT NULL 
 )
 go
 
