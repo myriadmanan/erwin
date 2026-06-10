@@ -1985,3 +1985,95 @@ END
 go
 
 
+
+
+ALTER TABLE [PAYMENT]
+DROP CONSTRAINT [R_7_1]
+go
+
+ALTER TABLE [PAYMENT]
+DROP CONSTRAINT [R_7_2]
+go
+
+ALTER TABLE [MO_RENT_REC]
+DROP CONSTRAINT [is_made_on]
+go
+
+ALTER TABLE [EMP]
+DROP CONSTRAINT [reports_to]
+go
+
+ALTER TABLE [PAYMENT]
+DROP CONSTRAINT [receives]
+go
+
+ALTER TABLE [PAYMENT]
+DROP CONSTRAINT [XPKPAYMENT]
+go
+
+execute sp_rename '[PAYMENT]', 'PAYMENTA6A82943001'
+go
+
+ALTER TABLE [EMP]
+  DROP COLUMN [supervisor]
+go
+
+ALTER TABLE [EMP]
+ADD [new_column]  char(18)  NULL
+go
+
+CREATE TABLE [PAYMENT]
+( 
+	[payment_transaction_number] integer  NOT NULL ,
+	[payment_type]       char(18)  NULL ,
+	[payment_amount]     numeric  NULL ,
+	[payment_date]       datetime  NULL ,
+	[payment_status]     varchar(1)  NULL ,
+	[EMP_number]         varchar(20)  NOT NULL ,
+	[CUST_number]        integer  NULL ,
+	[customer_no]        integer  NULL ,
+	[check_bank_number]  integer  NULL ,
+	[check_number]       integer  NULL ,
+	[epay_vendor_number] integer  NULL ,
+	[epay_account_number] integer  NULL ,
+	[credit_card_number] char(18)  NULL ,
+	[credit_card_exp]    datetime  NULL 
+)
+go
+
+ALTER TABLE [PAYMENT]
+ADD CONSTRAINT [XPKPAYMENT] PRIMARY KEY  CLUSTERED ([payment_transaction_number] ASC)
+go
+
+
+INSERT INTO [PAYMENT] ([payment_transaction_number], [payment_type], [CUST_number], [customer_no], [payment_amount], [payment_date], [payment_status], [EMP_number], [check_bank_number], [check_number], [epay_vendor_number], [epay_account_number], [credit_card_number], [credit_card_exp]) SELECT [payment_transaction_number], [payment_type], [CUST_number], [customer_no], CONVERT(numeric,payment_amount), [payment_date], [payment_status], [EMP_number], [check_bank_number], [check_number], [epay_vendor_number], [epay_account_number], [credit_card_number], [credit_card_exp] FROM PAYMENTA6A82943001
+
+go
+
+ALTER TABLE [PAYMENT]
+	ADD CONSTRAINT [R_7_1] FOREIGN KEY ([customer_no]) REFERENCES [CUST]([CUST_number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [PAYMENT]
+	ADD CONSTRAINT [R_7_2] FOREIGN KEY ([CUST_number]) REFERENCES [CUST_CREDIT]([CUST_number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [MO_RENT_REC]
+	ADD CONSTRAINT [is_made_on] FOREIGN KEY ([payment_transaction_number]) REFERENCES [PAYMENT]([payment_transaction_number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [PAYMENT]
+	ADD CONSTRAINT [receives] FOREIGN KEY ([EMP_number]) REFERENCES [EMP]([EMP_number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+DROP TABLE IF EXISTS PAYMENTA6A82943001
+go
