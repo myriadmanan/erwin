@@ -14704,3 +14704,8 @@ END
 go
 
 
+
+
+ALTER TABLE [Production].[Location]
+ADD [status_code]  char(18)  NULL
+go
